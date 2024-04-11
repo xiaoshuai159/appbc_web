@@ -1,0 +1,108 @@
+{
+	"code": 200,
+	"message": "操作成功",
+	"data": [
+		{
+			"name": "中心",
+			"onlineNum": 1,
+			"onlineDetail": [
+				{
+					"id": 10,
+					"udid": "192.168.93.13:5555",
+					"status": 1,
+					"appiumId": 1
+				}
+			],
+			"offlineNum": 1,
+			"offlineDetail": [
+				{
+					"id": 9,
+					"udid": "192.168.93.12:5555",
+					"status": 0,
+					"appiumId": 1
+				}
+			]
+		},
+		{
+			"name": "恶趣味群翁3",
+			"onlineNum": 0,
+			"onlineDetail": [],
+			"offlineNum": 1,
+			"offlineDetail": [
+				{
+					"id": 22,
+					"udid": "192.168.93.21:5555",
+					"status": 0,
+					"appiumId": 771
+				}
+			]
+		},
+		{
+			"name": "福建",
+			"onlineNum": 0,
+			"onlineDetail": [],
+			"offlineNum": 3,
+			"offlineDetail": [
+				{
+					"id": 11,
+					"udid": "192.168.93.14:5555",
+					"status": 0,
+					"appiumId": 3
+				},
+				{
+					"id": 12,
+					"udid": "192.168.93.15:5555",
+					"status": 0,
+					"appiumId": 2
+				},
+				{
+					"id": 13,
+					"udid": "192.168.93.16:5555",
+					"status": 0,
+					"appiumId": 2
+				}
+			]
+		},
+		{
+			"name": "贵州",
+			"onlineNum": 0,
+			"onlineDetail": [],
+			"offlineNum": 2,
+			"offlineDetail": [
+				{
+					"id": 14,
+					"udid": "192.168.93.17:5555",
+					"status": 0,
+					"appiumId": 2
+				},
+				{
+					"id": 15,
+					"udid": "192.168.93.18:5555",
+					"status": 0,
+					"appiumId": 3
+				}
+			]
+		},
+		{
+			"name": "长安",
+			"onlineNum": 0,
+			"onlineDetail": [],
+			"offlineNum": 2,
+			"offlineDetail": [
+				{
+					"id": 16,
+					"udid": "192.168.93.19:5555",
+					"status": 0,
+					"appiumId": 1
+				},
+				{
+					"id": 19,
+					"udid": "192.168.93.11:5555",
+					"status": 0,
+					"appiumId": 1
+				}
+			]
+		}
+	],
+	"timestamp": 1666662446575
+}

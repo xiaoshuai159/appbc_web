@@ -1,0 +1,99 @@
+/* 面包屑 */
+.el-breadcrumb {
+  font-size: 16px!important;
+  margin-left: 70px;
+  margin-bottom: 16px;
+  /* margin-top: -4px; */
+  line-height: 20px;
+}
+.el-breadcrumb__inner {
+  color: #333333;
+}
+
+.tabs-change {
+  float: right;
+  margin-top: -28px;
+  margin-bottom: 14px;
+}
+/* el-tabs  */
+/* 修改tab-item样式 */
+.el-tabs__item {
+  width: 140px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: 1px solid #D3D4DD;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #999999;
+  font-size: 16px !important;
+}
+/* 修改nav背景色 */
+.el-tabs__nav-scroll {
+  background-color: #ffffff;
+} 
+/* 去除顶部线 */
+/* :deep(.el-tabs--card>.el-tabs__header .el-tabs__nav) {
+  border: none;
+} */
+/* 内容区 */
+/* :deep(.el-tabs__content) {
+  padding: 10px;
+} */
+.el-tabs--border-card{
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  border-top: 1px solid #D3D4DD;
+  border-left: 1px solid #D3D4DD;
+  border-radius: 4px;
+}
+.el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+  width: 140px;
+  height: 40px;
+  background-color: #3B6FD9;
+  border-color: #3B6FD9;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px !important;
+}
+.el-tabs--border-card>.el-tabs__content {
+  /*  padding: 0px; */
+  display: none;
+}
+/* :deep(.el-tabs__item:first-child){
+  margin-right: 80px;
+} */
+.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  width: 140px;
+  height: 40px;
+  background-color: #ffffff;
+  border-color: #D3D4DD;
+  color: #999999;
+  text-align: center;
+  border-radius: 4px;
+}
+/* **************************************************************** */
+/* .el-button--primary {
+  color: #999999;
+  background: #ffffff;
+  border-color: #D3D4DD;
+  width: 120px;
+  height: 40px;
+  border-radius: 4px;
+}
+.el-button--primary.is-active,
+.el-button--primary:active {
+  background: #3B6FD9;
+  border-color: #3B6FD9;
+  color: #ffffff;
+  font-weight: 700;
+}
+.el-button--primary:focus,
+.el-button--primary:hover {
+  background: #3B6FD9;
+  border-color: #3B6FD9;
+  color: #ffffff;
+  font-weight: 700;
+} */
