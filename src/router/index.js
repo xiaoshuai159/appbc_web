@@ -161,5 +161,8 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
+router.beforeEach((to,from,next)=>{
+  document.title = "面向移动应用的自动化巡检平台"
+  next()
+})
 export default router

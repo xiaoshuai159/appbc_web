@@ -1,10 +1,10 @@
 <template>
-    <div id="task-index" class="el-main grid-content">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item>任务管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/task_management/analyse_task' }">分析任务</el-breadcrumb-item>
-      </el-breadcrumb>
-      <div class="shadow-div">
+  <div id="task-index" class="el-main grid-content">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item>任务管理</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/task_management/analyse_task' }">分析任务</el-breadcrumb-item>
+    </el-breadcrumb>
+    <div class="shadow-div">
       <el-form ref="taskForm" :inline="true" :model="taskForm">
         <el-form-item prop="appName">
           <el-input v-model="taskForm.appName">
@@ -40,22 +40,18 @@
                 text-align: center;
                 vertical-align: middle;
               ">|</span>
-               <el-button
-                type="primary"
-                style="width: auto"
-                @click.native="apk_input"
-                :loading="loadingbut3"
-                >{{ loadingbuttext3 }}</el-button
-                >
-                <input type="file" ref="fileInput2" @change="handleFileChange2" style="display: none">
-              <!-- <el-button type="primary" @click="toCreateTask" style="width: 110px">APK上传<i class="el-icon-upload el-icon--right"></i></el-button> -->
-              <!-- <el-upload action="#" name="file" ref="upload" :limit="1" :show-file-list="false" :on-exceed="handleExceed"
+        <el-button type="primary" style="width: auto" @click.native="apk_input" :loading="loadingbut3">{{
+          loadingbuttext3
+        }}</el-button>
+        <input type="file" ref="fileInput2" @change="handleFileChange2" style="display: none">
+        <!-- <el-button type="primary" @click="toCreateTask" style="width: 110px">APK上传<i class="el-icon-upload el-icon--right"></i></el-button> -->
+        <!-- <el-upload action="#" name="file" ref="upload" :limit="1" :show-file-list="false" :on-exceed="handleExceed"
                              class="upload-file" :file-list="fileList || []" :http-request="uploadFile" accept=".apk" style="display: inline-block;"
                             :on-change="fileChange" :on-remove="fileRemove" unique="false">
                             <el-button type="primary" @click="toCreateTask" style="width: 110px">APK上传<i class="el-icon-upload el-icon--right"></i></el-button>
                         </el-upload> -->
-              
-            <!-- </el-upload> -->
+
+        <!-- </el-upload> -->
       </div>
 
     </div>
@@ -83,16 +79,17 @@
               </div>
             </template>
           </el-table-column>
-      
+
           <el-table-column prop="issuer" label="开发者" :show-overflow-tooltip="true" min-width="120">
           </el-table-column>
           <el-table-column prop="source" label="来源" :show-overflow-tooltip="true" min-width="120">
           </el-table-column>
           <el-table-column label="操作" width="220" fixed="right">
             <template slot-scope="scope">
-              <el-button class="operator-table-btn green" style="border-right: 2px solid #cecece;padding-right:10px" type="warning" size="mini" @click="startTask(scope.row.id)">分析</el-button>
+              <el-button class="operator-table-btn green" style="border-right: 2px solid #cecece;padding-right:10px"
+                type="warning" size="mini" @click="startTask(scope.row.id)">分析</el-button>
               <el-button class="operator-table-btn blue" type="primary" size="mini"
-                >详情</el-button>
+                @click="xqClick(scope.row.id)">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -102,7 +99,61 @@
         </el-pagination>
       </div>
     </div>
-    </div>
+    <el-dialog :visible.sync="dialogVisible" top="3%">
+      <div>
+        <p class="dialog-title">APK信息</p>
+        <p>文件名称：<span>{{ dialogData.filename }}</span></p>
+        <p>APP名称：<span>{{ dialogData.appName }}</span></p>
+        <p>APP版本：<span>{{ dialogData.appVersion }}</span></p>
+        <p>PackageName：<span>{{ dialogData.pkgName }}</span></p>
+        <p>Main Activity：<span>{{ dialogData.mainActivity }}</span></p>
+        <p>文件大小：<span>{{ dialogData.fileSize }}</span></p>
+        <p>Md5：<span>{{ dialogData.fileMd5 }}</span></p>
+        <p>sha1：<span>{{ dialogData.fileSha1 }}</span></p>
+        <p>sha256：<span>{{ dialogData.fileSha256 }}</span></p>
+        <p class="dialog-title">证书信息</p>
+        <p style="height: auto; background-color: #f2f2f2;padding:5px;border:solid #c9c9c9 1px;">{{
+          dialogData.certificateInfo }}</p>
+        <p class="dialog-title">APP权限信息</p>
+        <div class="permissions-list">
+          <div v-for="(permission, index) in dialogData.permissions" :key="index"
+            style="border:solid #c9c9c9 1px;margin-bottom: -1px;" class="permission-row"
+            :class="{ 'odd-row': index % 2 !== 0, 'even-row': index % 2 === 0 }">
+            <div class="permission-cell">{{ permission.permission }}</div>
+            <div class="status-cell">{{ permission.status }}</div>
+          </div>
+        </div>
+        <p class="dialog-title">第三方SDK信息</p>
+        <div class="sdk-list">
+          <p v-for="(sdk, index) in dialogData.sdks" :key="index"
+            :class="{ 'odd-row': index % 2 !== 0, 'even-row': index % 2 === 0 }" style="margin-bottom: -1px;">{{ sdk }}
+          </p>
+        </div>
+        <p class="dialog-title">动态特征</p>
+        <div class="features-list">
+          <div v-for="(feature, index) in dialogData.networkFeatures" :key="index" class="feature-row"
+            style="border:solid #c9c9c9 1px;margin-bottom: -1px;"
+            :class="{ 'odd-row': index % 2 !== 0, 'even-row': index % 2 === 0 }">
+            <div class="feature-cell">{{ feature.host }}</div>
+            <div class="feature-cell">{{ feature.ip }}</div>
+            <div class="feature-cell">{{ feature.port }}</div>
+            <div class="feature-cell">{{ feature.protocol }}</div>
+            <div class="feature-cell" style="cursor: pointer;">
+              <!-- {{ '证书' }} -->
+                <el-tooltip effect="dark" placement="top" class="item" :content="feature.sslCert" >
+                  <div slot="content" class="oneLine">
+                    {{feature.sslCert}}
+                  </div>
+                  <div>
+                    证书
+                  </div>
+                </el-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -112,18 +163,36 @@ export default {
   name: "AnalyseTask",
   data() {
     return {
+      dialogData: {
+        filename: "",
+        appName: "",
+        appVersion: "",
+        pkgName: "",
+        mainActivity: "",
+        fileSize: "",
+        fileMd5: "",
+        fileSha1: "",
+        fileSha256: "",
+        certificateInfo: "",
+        status: "",
+        permissions: [],
+        sdks: []
+      },
+
+      certificateVisible: false,
+      dialogVisible: false,
       loadingbuttext3: 'APK上传',
       loadingbut3: false,
       fileList: [],
-      curFile:{},
+      curFile: {},
       taskForm: {
-        appName:"",
-        pkgName:"",
+        appName: "",
+        pkgName: "",
         taskName: "",
         sTime: "",
         eTime: "",
         taskType: "全部",
-        status:""
+        status: ""
       },
       tableData: [], //表格数据初始化
       currentPage: 1, //当前页码
@@ -157,6 +226,31 @@ export default {
     window.removeEventListener("keydown", this.handleSearch, false); //销毁回车事件，如果不销毁，在其他页面敲回车也会执行回车登录操作。
   },
   methods: {
+    showCertificate(sslCert) {
+      console.log(sslCert);
+      // 显示SSL证书内容的浮层
+      this.certificateVisible = true;
+    },
+
+    hideCertificate() {
+      this.certificateVisible = false;
+    },
+    async xqClick(id) {
+      const { data: res } = await this.$http.get('/apk/analyzeDetail', { params: { id } })
+      this.dialogData = res.data
+      this.dialogData.permissions.unshift({
+        permission: '权限',
+        status: '状态'
+      })
+      this.dialogData.networkFeatures.unshift({
+        host:'域名',
+        ip:"IP",
+        port:"端口",
+        protocol:"协议",
+        sslCert:"证书"
+      })
+      this.dialogVisible = true
+    },
     handleFileChange2(event) {
       // 获取选中的文件
       const file = event.target.files[0];
@@ -171,56 +265,56 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       })
-      .then((res) => {
-        // console.log(res);
-        if(res.data.code == 200){
-          console.log(res)
-          // this.$message(res.data.message);
+        .then((res) => {
+          // console.log(res);
+          if (res.data.code == 200) {
+            console.log(res)
+            // this.$message(res.data.message);
+            this.loadingbuttext3 = 'APK上传'
+            this.loadingbut3 = false
+            this.newdomainSimpleVo.dataType = 'apk'
+            this.tasklist()
+          } else {
+            console.log(res)
+            this.$message(res.data.message);
+            this.loadingbuttext3 = 'APK上传'
+            this.loadingbut3 = false
+          }
+
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$message('上传失败：', error);
           this.loadingbuttext3 = 'APK上传'
           this.loadingbut3 = false
-          this.newdomainSimpleVo.dataType = 'apk'
-          this.tasklist()
-        }else{
-          console.log(res)
-          this.$message(res.data.message);
-          this.loadingbuttext3 = 'APK上传'
-          this.loadingbut3 = false
-        }
-        
-      })
-      .catch((error) => {
-        console.log(error);
-        this.$message('上传失败：', error);
-        this.loadingbuttext3 = 'APK上传'
-        this.loadingbut3 = false
-      });
+        });
     },
-    apk_input(){
+    apk_input() {
       this.$refs.fileInput2.value = '';
       this.$refs.fileInput2.click();
     },
     //上传文件
     uploadFile(param) {
-            const { file, onSuccess, onError } = param;
-            console.log("param", param);
-            //把上传的文件赋值给data属性的file
-            this.probeAppForm.file = file;
-            this.probeAppForm.fileName = file;
-            const formData = new FormData();
-            formData.append('multipartFile', file);
-            this.$http.post('/apk/upload', formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
-                }
-            }).then(response => {
-                // 上传成功
-                onSuccess(response.data);
-            }).catch(error => {
-                // 上传失败
-                onError(error);
-                });
-            
-        },
+      const { file, onSuccess, onError } = param;
+      console.log("param", param);
+      //把上传的文件赋值给data属性的file
+      this.probeAppForm.file = file;
+      this.probeAppForm.fileName = file;
+      const formData = new FormData();
+      formData.append('multipartFile', file);
+      this.$http.post('/apk/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(response => {
+        // 上传成功
+        onSuccess(response.data);
+      }).catch(error => {
+        // 上传失败
+        onError(error);
+      });
+
+    },
 
     // 列表初始
     async tasklist() {
@@ -304,8 +398,8 @@ export default {
     //清空
     resetForm() {
       this.taskForm.appName = "",
-      this.taskForm.pkgName = "",
-      this.tasklist();
+        this.taskForm.pkgName = "",
+        this.tasklist();
     },
     //分页
     handleSizeChange(val) {
@@ -603,30 +697,124 @@ export default {
       this.ids = str;
     },
     handleExceed(files, fileList) {
-            console.log(files, fileList);
-            this.$message.warning(
-                `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length
-                } 个文件`
-            );
-        },
-        //文件已上传则关闭校验
-        fileChange(uploadFile, fileList) {
-            this.probeAppForm.fileValidate = uploadFile
-            if (fileList.length !== 0) {
-                this.$refs.probeAppForm.validateField('fileValidate')
-            }
-        },
-        //文件移除重新校验
-        fileRemove(uploadFile, fileList) {
-            if (fileList.length === 0) {
-                this.probeAppForm.fileValidate = null
-                this.$refs.probeAppForm.validateField('fileValidate')
-            }
-        },
+      console.log(files, fileList);
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length
+        } 个文件`
+      );
+    },
+    //文件已上传则关闭校验
+    fileChange(uploadFile, fileList) {
+      this.probeAppForm.fileValidate = uploadFile
+      if (fileList.length !== 0) {
+        this.$refs.probeAppForm.validateField('fileValidate')
+      }
+    },
+    //文件移除重新校验
+    fileRemove(uploadFile, fileList) {
+      if (fileList.length === 0) {
+        this.probeAppForm.fileValidate = null
+        this.$refs.probeAppForm.validateField('fileValidate')
+      }
+    },
   },
 };
 </script>
+
 <style lang="less" scoped>
+.oneLine{
+  
+  width: 400px;
+  white-space: pre-wrap;
+}
+.el-dialog>div {
+
+  .features-list {
+    font-size: 10px;
+
+    .feature-row {
+      display: flex;
+      border-bottom: 1px solid #c9c9c9;
+
+      .feature-cell {
+        padding: 5px;
+        flex: 1;
+        border-right: 1px solid #c9c9c9;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      &.odd-row {
+        background-color: #f2f2f2;
+      }
+
+      &.even-row {
+        background-color: #fff;
+      }
+    }
+  }
+}
+
+.el-dialog>div {
+  .permissions-list {
+    font-size: 10px;
+
+    .permission-row {
+      display: flex;
+      border-bottom: 1px solid #c9c9c9;
+
+      .permission-cell,
+      .status-cell {
+        padding: 5px;
+        flex: 1;
+        border-right: 1px solid #c9c9c9;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      &.odd-row {
+        background-color: #f2f2f2;
+      }
+
+      &.even-row {
+        background-color: #fff;
+      }
+    }
+  }
+}
+
+.el-dialog>div {
+
+  .sdk-list {
+    p {
+      padding: 5px;
+      border: 1px solid #c9c9c9;
+
+      &.odd-row {
+        background-color: #f2f2f2;
+      }
+
+      &.even-row {
+        background-color: #fff;
+      }
+    }
+  }
+}
+
+.el-dialog .dialog-title {
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.el-dialog p {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
 :deep(.el-table__header) {
   width: 100% !important;
 }
