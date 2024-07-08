@@ -24,20 +24,29 @@
             <el-option label="离线" value="0"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="province">
-          <el-input v-model="clientAppForm.province">
-            <template slot="prepend">省份</template>
-          </el-input>
+        <el-form-item prop="province" label="省份">
+          <el-select v-model="clientAppForm.province">
+            <el-option v-for="item in provinceOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item prop="isp">
-          <el-input v-model="clientAppForm.isp">
-            <template slot="prepend">运营商</template>
-          </el-input>
+        <el-form-item prop="isp" label="运营商">
+          <el-select v-model="clientAppForm.isp">
+            <el-option v-for="item in ispOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item prop="operateSystem">
-          <el-input v-model="clientAppForm.os">
-            <template slot="prepend">操作系统</template>
-          </el-input>
+        <el-form-item prop="operateSystem" label="操作系统">
+          <el-select v-model="clientAppForm.os">
+            <el-option v-for="item in osOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="osVersion" label="系统版本">
+          <el-select v-model="clientAppForm.osVersion">
+            <el-option v-for="item in versionOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
         <div class="operator-form-btn">
           <el-button type="primary" @click="cx()">查询</el-button>
@@ -128,13 +137,15 @@
                 @click="deleteClient(scope.row.id)">删除</el-button> -->
               <!-- <el-button class="operator-table-btn orange" type="warning" size="mini"
                 :disabled="scope.row.status == 0">连接</el-button> -->
-              <el-button class="operator-table-btn blue" type="primary" size="mini" @click="updateClient(scope.row.id)">修改</el-button>
-              <el-button class="operator-table-btn red" type="danger" size="mini" @click="deleteClient(scope.row.id)">删除</el-button>
+              <el-button class="operator-table-btn blue" type="primary" size="mini"
+                @click="updateClient(scope.row.id)">修改</el-button>
+              <el-button class="operator-table-btn red" type="danger" size="mini"
+                @click="deleteClient(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-size="pageSize" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next, jumper"
+          :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
           :total="clientTotal" style="float: right; margin-top: 16px">
         </el-pagination>
       </div>
@@ -147,6 +158,10 @@ export default {
   name: "ClientApp",
   data() {
     return {
+      osOptions:[],
+      provinceOptions: [],
+      ispOptions:[],
+      versionOptions:[],
       clientAppForm: {
         appiumId: "",
         id: "",
@@ -158,7 +173,8 @@ export default {
         status: "全部",
         priority: "全部",
         isp: "",
-        os: ""
+        os: "",
+        osVersion:""
       },
       outline: 0,
       online: 0,
@@ -176,6 +192,7 @@ export default {
     }
     this.clientList(); //初始化表格
     this.clientLineNum();
+    this.getOptionsAPI()
   },
   mounted() {
     window.addEventListener("keydown", this.handleSearch);
@@ -184,6 +201,36 @@ export default {
     window.removeEventListener("keydown", this.handleSearch, false); //销毁回车事件，如果不销毁，在其他页面敲回车也会执行回车登录操作。
   },
   methods: {
+    async getOptionsAPI() {
+      const { data: provinceRes } = await this.$http.get("/dict/province");
+      this.provinceOptions = provinceRes.map((item) => {
+        return {
+          value: item,
+          label: item
+        }
+      })
+      const { data: ispRes } = await this.$http.get("/dict/isp");
+      this.ispOptions = ispRes.map((item) => {
+        return {
+          value: item,
+          label: item
+        }
+      })
+      const { data: versionRes } = await this.$http.get("/dict/android_version");
+      this.versionOptions = versionRes.map((item) => {
+        return {
+          value: item,
+          label: item
+        }
+      })
+      const { data: osRes } = await this.$http.get("/dict/systems");
+      this.osOptions = osRes.map((item) => {
+        return {
+          value: item,
+          label: item
+        }
+      })
+    },
     // 列表初始
     async clientList() {
       let list = {};
@@ -218,7 +265,8 @@ export default {
         status: this.clientAppForm.status == "全部" ? null : this.clientAppForm.status,
         province: this.clientAppForm.province,
         isp: this.clientAppForm.isp,
-        os: this.clientAppForm.os
+        os: this.clientAppForm.os,
+        osVersion: this.clientAppForm.osVersion,
       };
       console.log(this.currentPage);
       const { data: res } = await this.$http.post("/client/list?page=" + this.currentPage + "&pageSize=" + this.pageSize, list);
@@ -231,7 +279,7 @@ export default {
         });
       }
     },
-    cx(){
+    cx() {
       this.currentPage = 1;
       this.pageSize = 10
       // console.log(this.currentPage);
@@ -246,6 +294,7 @@ export default {
       this.clientAppForm.province = "",
         this.clientAppForm.isp = "",
         this.clientAppForm.os = "",
+        this.clientAppForm.osVersion = "",
         this.currentPage = 1,
         this.clientList();
     },

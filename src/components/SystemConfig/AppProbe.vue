@@ -62,7 +62,7 @@
           </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-size="pageSize" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next, jumper"
+          :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
           :total="taskTotal" style="float: right; margin-top: 16px">
         </el-pagination>
       </div>
@@ -121,7 +121,7 @@ export default {
           item.num = index + startNum;
           return item;
         });
-        
+
         this.$nextTick(() => {
           //在数据加载完，重新渲染表格
           this.$refs["taskTable"].doLayout();
@@ -152,7 +152,7 @@ export default {
           item.num = index + startNum;
           return item;
         });
-        
+
         this.$nextTick(() => {
           //在数据加载完，重新渲染表格
           this.$refs["taskTable"].doLayout();
@@ -245,15 +245,24 @@ export default {
     async downloadApp(id) {
       const { data: res } = await this.$http.get(
         "/app/download?id=" + id,
-        {
-          responseType: 'blob', //设置请求的类型为blob文件流形式
-        },
+        // {
+        //   responseType: 'blob', //设置请求的类型为blob文件流形式
+        // },
       );
       console.log(res);
-      let binaryData = [];
-      binaryData.push(res);
-      var _url = window.URL.createObjectURL(new Blob(binaryData, { type: "application/vnd.ms-excel" }))
-      window.open(_url, "_blank").focus();
+      if (res.code == 404) {
+        this.$message({
+          message: res.message,
+          type: "error",
+        });
+      } else {
+        let binaryData = [];
+        binaryData.push(res);
+        var _url = window.URL.createObjectURL(new Blob(binaryData, { type: "application/vnd.ms-excel" }))
+        window.open(_url, "_blank").focus();
+      }
+
+
     },
     //批量操作按钮
     handleSelectionChange(val) {
@@ -514,4 +523,5 @@ button.is-disabled:hover {
   color: #1675d5;
   text-decoration: underline;
   cursor: pointer;
-}</style>
+}
+</style>

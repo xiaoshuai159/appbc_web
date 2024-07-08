@@ -39,11 +39,18 @@
         <el-button type="primary" @click="toAddProbeApp" style="width: 130px">+ App监测配置</el-button>
       </div>
       <!-- 导出按钮 -->
-      <div style="float: right;">
+      <!-- <div style="float: right;">
         <el-button style="width: 140px;background-color: #F39300;" @click="exportResult()">
           <i class="el-icon-document-copy"></i>
           <span style="margin-left: 8px;">导出查询结果</span>
         </el-button>
+      </div> -->
+      <!-- 批量操作按钮 -->
+      <div style="float: right; margin-top: 10px">
+        <a class="batch-opt" @click="exportResult()">
+          <i class="el-icon-document"></i>
+          <span class="l10 grey" style="cursor: pointer">批量导出</span>
+        </a>
       </div>
     </div>
     <!-- App列表 -->
@@ -109,7 +116,7 @@
           </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-size="pageSize" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next, jumper"
+          :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
           :total="taskTotal" style="float: right; margin-top: 16px">
         </el-pagination>
       </div>

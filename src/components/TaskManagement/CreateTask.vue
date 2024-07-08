@@ -13,8 +13,8 @@
     <div class="create-task-form">
       <div class="create-task-form-header">任务创建</div>
       <div class="create-task-form-info">
-        <el-form ref="createTaskForm" :inline="true" :rules="createTaskRules" :model="createTaskForm" :disabled="formIsDisabled"
-          class="demo-form-inline">
+        <el-form ref="createTaskForm" :inline="true" :rules="createTaskRules" :model="createTaskForm"
+          :disabled="formIsDisabled" class="demo-form-inline">
           <el-form-item label="通知配置" style="width: 100%" prop="isNotice">
             <el-checkbox v-model="createTaskForm.isNotice">完成后安信告知</el-checkbox>
           </el-form-item>
@@ -50,8 +50,7 @@
             </el-select>
           </el-form-item>
           <!--app列表+模糊匹配-->
-          <el-form-item label="拨测APP" prop="probeApp" style="width: 100%"
-            v-if="createTaskForm.businessType === 'APP'">
+          <el-form-item label="拨测APP" prop="probeApp" style="width: 100%" v-if="createTaskForm.businessType === 'APP'">
             <el-checkbox class="quanxuan" v-model="checkAll" :indeterminate="isIndeterminateModel"
               @change="handleCheckAllAppChange">全选&nbsp;&nbsp;&nbsp;
             </el-checkbox>
@@ -70,7 +69,8 @@
               :show-file-list="false" :on-exceed="handleExceed" :auto-upload="false" class="upload-file">
               <i class="el-icon-folder-add"></i>
               <el-tooltip placement="top" effect="light">
-                <div slot="content">{{uploadTextTitle}}<br/>{{uploadTextType}}<br/>{{uploadTextType}}<br/>{{uploadTextType}}</div>
+                <div slot="content">
+                  {{ uploadTextTitle }}<br />{{ uploadTextType }}<br />{{ uploadTextType }}<br />{{ uploadTextType }}</div>
                 <div class="upload-file-text">上传文件</div>
               </el-tooltip>
             </el-upload>
@@ -117,18 +117,9 @@
           </el-form-item>
           <el-form-item style="width: 100%">
             <div class="node-data">
-              <el-checkbox-group
-                v-model="createTaskForm.testClients"
-                @change="handleCheckedNodeChange"
-              >
-                <el-checkbox
-                  name="testClients"
-                  v-for="item in testNodeData"
-                  :label="item.note"
-                  :key="item.id"
-                  border
-                >
-                  {{item.note}}
+              <el-checkbox-group v-model="createTaskForm.testClients" @change="handleCheckedNodeChange">
+                <el-checkbox name="testClients" v-for="item in testNodeData" :label="item.note" :key="item.id" border>
+                  {{ item.note }}
                   <span v-if="item.type === 'APP'" class="appNodeClass nodeClass">app</span>
                   <span v-else-if="item.type === 'PC'" class="pcNodeClass nodeClass">pc</span>
                   <!-- <span v-else-if="testNodeData.length === allNode.length && item.type === 'PC'" class="pcNodeClass nodeClass">PC</span> -->
@@ -148,13 +139,14 @@
 </template>
 <script>
 import "@/assets/css/breadcrumb-tabs-style.css";
-import { 
-  getTaskNode, 
-  getAppTaskNode, 
-  createTask, 
-  getTaskDetailByID, 
+import {
+  getTaskNode,
+  getAppTaskNode,
+  createTask,
+  getTaskDetailByID,
   getAppTaskContentByID,
-  getTaskContentByID } from "@/api/task-management";
+  getTaskContentByID
+} from "@/api/task-management";
 import { readFile } from "@/utils/readFile";
 import { defaultURL } from "@/utils/request";
 import xlsx from "xlsx";
@@ -203,7 +195,7 @@ export default {
       if (value === "") {
         if (this.createTaskForm.businessType === "URL") {
           errorTips = "支持.xlsx类型文件, 无表头, 一列多行, 每行数据格式如'https://www.baidu.com/'"
-        } 
+        }
         // else if (this.createTaskForm.businessType === "DNS") {
         //   errorTips = "支持.xlsx类型文件, 无表头, 一列多行, 每行数据格式如'www.baidu.com'"
         // } else if (this.createTaskForm.businessType === "IP_PORT") {
@@ -294,21 +286,36 @@ export default {
       uploadURL: "/taskService/api/task/create",
       // uploadURL: defaultURL + '/taskService/api/task/create',
       clientPageParams: {
-        page:1,
-        pageSize:10000
+        page: 1,
+        pageSize: 10000
       },
     };
   },
   watch: {
+    "createTaskForm.city": {
+      handler(newVal) {
+        this.queryNode()
+      }
+    },
+    "createTaskForm.operator": {
+      handler(newVal) {
+        this.queryNode()
+      }
+    },
+    "createTaskForm.ipAddr": {
+      handler(newVal) {
+        this.queryNode()
+      }
+    },
     "createTaskForm.businessType": {
       handler(newVal) {
-        if(newVal === "URL"){
+        if (newVal === "URL") {
           this.uploadTextType = "https://www.baidu.com/"
           // this.createTaskForm.scope = ['1', '2']
           this.createTaskForm.scope = ['2']
           this.pcScope = false
           this.appScope = false
-        }else if(newVal === "APP"){
+        } else if (newVal === "APP") {
           this.createTaskForm.scope = ['2']
           this.pcScope = true
           this.appScope = false
@@ -330,16 +337,16 @@ export default {
     "createTaskForm.testType": {
       deep: true,
       handler(newVal, oldVal) {
-        if(newVal !== oldVal){
+        if (newVal !== oldVal) {
           // this.createTaskForm.allSelected = false
           // console.log('createTaskForm.testType', newVal, oldVal);
         }
       },
     },
     allNode: {
-      handler(newVal){
-        if(newVal.length !== 0){
-          if(this.$route.query.id && this.$route.query.from){
+      handler(newVal) {
+        if (newVal.length !== 0) {
+          if (this.$route.query.id && this.$route.query.from) {
             this.getTaskInfoByID(parseInt(this.$route.query.id), this.$route.query.from)
             // 查询移动端 拨测目标 的具体内容
             this.getAppTaskContent(parseInt(this.$route.query.id))
@@ -365,10 +372,10 @@ export default {
   methods: {
     // 获取APP 拨测目标内容
     getAppTaskContent(appId) {
-      getAppTaskContentByID({taskId: appId, page: 1, pageSize: 30}).then(res => {
+      getAppTaskContentByID({ taskId: appId, page: 1, pageSize: 30 }).then(res => {
         // console.log(this.appTaskContent);
         // console.log(res);
-        for(let a of res.data.dataList){
+        for (let a of res.data.dataList) {
           this.appTaskContent.push(a.monitorObject)
         }
         console.log(this.appTaskContent);
@@ -376,16 +383,16 @@ export default {
     },
     // 获取PC 拨测目标内容
     getPCTaskContent(pcId) {
-      getTaskContentByID({taskId: pcId}).then(res => {
-        for(let p of res.data){
+      getTaskContentByID({ taskId: pcId }).then(res => {
+        for (let p of res.data) {
           this.pcTaskContent.push(p.content)
         }
       })
     },
     // 根据任务ID获取任务详情
-    getTaskInfoByID(taskId, taskFrom){
-      getTaskDetailByID({id: taskId}).then(res => {
-        if(taskFrom === "taskName"){
+    getTaskInfoByID(taskId, taskFrom) {
+      getTaskDetailByID({ id: taskId }).then(res => {
+        if (taskFrom === "taskName") {
           this.formIsDisabled = true
         }
         setTimeout(() => {
@@ -394,14 +401,14 @@ export default {
       })
     },
     // 任务名称、复制 功能
-    taskNameHandle(taskInfo){
+    taskNameHandle(taskInfo) {
       console.log('==taskInfo===', taskInfo);
       taskInfo.isNotice === 1 ? this.createTaskForm.isNotice = true : this.createTaskForm.isNotice = false
-      if(taskInfo.priority === 1){
+      if (taskInfo.priority === 1) {
         this.createTaskForm.priority = "高"
-      }else if(taskInfo.priority === 2){
+      } else if (taskInfo.priority === 2) {
         this.createTaskForm.priority = "中"
-      }else if(taskInfo.priority === 3){
+      } else if (taskInfo.priority === 3) {
         this.createTaskForm.priority = "低"
       }
       this.createTaskForm.businessType = taskInfo.businessType
@@ -415,11 +422,11 @@ export default {
       // }
       this.createTaskForm.scope = ['2']
       this.createTaskForm.netType = taskInfo.netType
-      if(taskInfo.businessType === 'URL' && taskInfo.type === 'APP'){
+      if (taskInfo.businessType === 'URL' && taskInfo.type === 'APP') {
         this.createTaskForm.taskContent = this.appTaskContent.join(',')
-      }else if(taskInfo.businessType === 'APP' && taskInfo.type === 'APP'){
+      } else if (taskInfo.businessType === 'APP' && taskInfo.type === 'APP') {
         this.createTaskForm.probeApp = this.appTaskContent
-      }else{
+      } else {
         this.createTaskForm.taskContent = this.pcTaskContent.join(',')
       }
       this.createTaskForm.taskStartTime = taskInfo.taskStartTime
@@ -427,35 +434,35 @@ export default {
       this.createTaskForm.plannedTestCount = taskInfo.plannedTestCount
       this.createTaskForm.testInternal = taskInfo.testInternal
       let testClientsList = []
-      if(taskInfo.testClients.indexOf(',') != -1){
+      if (taskInfo.testClients.indexOf(',') != -1) {
         testClientsList = taskInfo.testClients.split(',')
-      }else{
+      } else {
         testClientsList[0] = taskInfo.testClients
       }
       console.log(testClientsList);  // ['58']
       let selectNode = []
-      for(let i of testClientsList){
-        for(let j of this.allNode){
-          if(j.id === i){
+      for (let i of testClientsList) {
+        for (let j of this.allNode) {
+          if (j.id === i) {
             selectNode.push(j)
           }
         }
       }
       // console.log(this.allNode);
       console.log(selectNode);
-      for(let k of selectNode){
+      for (let k of selectNode) {
         this.createTaskForm.testClients.push(k.note)
       }
       this.copyTaskClients = taskInfo.testClients
     },
     // 初始化 - 节点列表
-    initNode(){
+    initNode() {
       let appDataParams = {
         province: this.createTaskForm.city,
         isp: this.createTaskForm.operator,
         udid: this.createTaskForm.ipAddr,
       };
-      getAppTaskNode(appDataParams,this.clientPageParams).then((res)=>{
+      getAppTaskNode(appDataParams, this.clientPageParams).then((res) => {
         this.allNode = this.testNodeData = res.data.dataList;
         for (let i of this.testNodeData) {
           if (i.note) {
@@ -518,13 +525,13 @@ export default {
       this.isIndeterminate =
         this.checkNodeList.length > 0 && this.checkNodeList.length < this.allNode.length;
       // 查询input全为空时，显示已选中节点
-      if( this.createTaskForm.city === '' && 
-          this.createTaskForm.operator === ''&& 
-          this.createTaskForm.ipAddr === '' &&
-          this.createTaskForm.testType === ''){
-          // console.log('清空查询-----', this.checkNodeList);
-          this.createTaskForm.testClients = this.checkNodeList
-          // console.log('909090---复制后', this.createTaskForm.testClients);
+      if (this.createTaskForm.city === '' &&
+        this.createTaskForm.operator === '' &&
+        this.createTaskForm.ipAddr === '' &&
+        this.createTaskForm.testType === '') {
+        // console.log('清空查询-----', this.checkNodeList);
+        this.createTaskForm.testClients = this.checkNodeList
+        // console.log('909090---复制后', this.createTaskForm.testClients);
       }
       this.createTaskForm.allSelected = false
       // this.testNodeData = [];
@@ -538,16 +545,16 @@ export default {
         isp: this.createTaskForm.operator,
         udid: this.createTaskForm.ipAddr,
       };
-      getAppTaskNode(appDataParams,this.clientPageParams).then(({data:res}) => {
-          if (res.code === 0) {
-            // this.testNodeData = [];
-            console.log(res.dataList);
-            this.testNodeData = res.dataList;
-            // console.log('app===============', res.dataList);
-          } else {
-            console.log("app端节点请求失败信息: ", res);
-          }
-        })
+      getAppTaskNode(appDataParams, this.clientPageParams).then(({ data: res }) => {
+        if (res.code === 0) {
+          // this.testNodeData = [];
+          console.log(res.dataList);
+          this.testNodeData = res.dataList;
+          // console.log('app===============', res.dataList);
+        } else {
+          console.log("app端节点请求失败信息: ", res);
+        }
+      })
       // if (this.createTaskForm.testType == "pc") {
       //   getTaskNode(pcQueryParams).then((res) => {
       //     if (res.code === 200) {
@@ -582,7 +589,7 @@ export default {
       //     }
       //   });
       // }
-      
+
     },
     // 清空拨测节点 选择菜单
     resetNode() {
@@ -602,7 +609,7 @@ export default {
           },
         }
       );
-      if (res.code == 0) { 
+      if (res.code == 0) {
         this.appList = res.dataList;
       }
     },
@@ -623,7 +630,7 @@ export default {
     handleCheckedmodelChange(value) {
       // console.log("当前多选框全部选项：");
       // console.log(this.appList);
-      
+
       // console.log("变化的值：");
       // console.log(value);
       console.log("当前多选框内值：");
@@ -640,14 +647,14 @@ export default {
       let checkNode = this.testNodeData.map((item) => {
         return item.note;
       });
-      if(val){
+      if (val) {
         // console.log('全选');
         this.checkNodeList.push(...checkNode)
-      }else{
+      } else {
         // console.log('没有全选');
-        if(this.testNodeData.length === this.allNode.length){
+        if (this.testNodeData.length === this.allNode.length) {
           this.checkNodeList = []
-        }else{
+        } else {
           this.checkNodeList = arrayDifferece(this.checkNodeList, this.testNodeData)
         }
       }
@@ -676,7 +683,7 @@ export default {
     // 保存
     submitCreateTaskForm(formName) {
       console.log(this.$route.query.from);
-      if(this.$route.query.from === "taskName") return
+      if (this.$route.query.from === "taskName") return
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let isNoticeVal = 0;
@@ -704,16 +711,16 @@ export default {
           // if(this.$route.query.from === 'copyTask'){
           //   testClientsVal = this.copyTaskClients
           // }else{
-            this.checkNodeList = arrayFilter(this.checkNodeList)
-            let testClientsTemp = [];
-            for (let i of this.allNode) {
-              for (let j of this.checkNodeList) {
-                if (i.note === j) {
-                  testClientsTemp.push(i.id);
-                }
+          this.checkNodeList = arrayFilter(this.checkNodeList)
+          let testClientsTemp = [];
+          for (let i of this.allNode) {
+            for (let j of this.checkNodeList) {
+              if (i.note === j) {
+                testClientsTemp.push(i.id);
               }
             }
-            testClientsVal = testClientsTemp.join(",");
+          }
+          testClientsVal = testClientsTemp.join(",");
           // }
           let createParams = {
             businessType: this.createTaskForm.businessType,
@@ -731,7 +738,7 @@ export default {
           };
           console.log("****createParams******", createParams);
           createTask(createParams)
-            .then(({data:res}) => {
+            .then(({ data: res }) => {
               console.log("任务创建返回值:", res);
               if (res.code === 200) {
                 this.$message({
@@ -760,7 +767,7 @@ export default {
     },
     // 取消
     resetCreateTaskForm(formName) {
-      if(this.$route.query.from === "taskName") return
+      if (this.$route.query.from === "taskName") return
       this.$refs[formName].resetFields();
       // this.initNode();
       this.resetNode();

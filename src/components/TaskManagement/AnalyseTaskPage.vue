@@ -16,6 +16,21 @@
             <template slot="prepend">APP包名</template>
           </el-input>
         </el-form-item>
+        <el-form-item prop="status" label="分析状态">
+          <el-select v-model="taskForm.status" style="transform: translateY(-1px);">
+            <el-option v-for="item in statusList" :label="item.label" :value="item.value"></el-option>
+
+          </el-select>
+        </el-form-item>
+        <el-form-item label="入库时间" prop="taskTime">
+          <el-date-picker v-model="taskForm.sTime" type="date" format="yyyy-MM-dd" width="10vw"
+            value-format="yyyy-MM-dd" placement="bottom-start" placeholder="开始时间" class="input-time">
+          </el-date-picker>
+          <span class="split">至</span>
+          <el-date-picker v-model="taskForm.eTime" type="date" format="yyyy-MM-dd" width="10vw"
+            value-format="yyyy-MM-dd" placement="bottom-start" placeholder="结束时间" class="input-time">
+          </el-date-picker>
+        </el-form-item>
         <div style="text-align: right;">
           <el-button type="primary" @click="searchForm()">查询</el-button>
           <el-button type="info" @click="resetForm()">清空</el-button>
@@ -25,24 +40,23 @@
     <div class="operator-div">
       <!-- 创建任务 -->
       <div style="display: inline-block;">
-        <!-- <el-button type="primary" @click="toCreateTask" style="width: 130px">+ 任务创建</el-button> -->
-        <!-- <span style="margin: 0 16px;
-                color: #d3d4dd;
-                font-size: 26px;
-                text-align: center;
-                vertical-align: middle;
-              ">|</span> -->
-        <!-- <el-button type="info" @click="refresh">刷新</el-button> -->
-        <el-button type="primary" @click="startTaskByList" style="width: 100px">批量分析</el-button>
+        <!-- <el-button type="primary" @click="startTaskByList" style="width: 100px">批量分析</el-button>
         <span style="margin: 0 16px;
                 color: #d3d4dd;
                 font-size: 27px;
                 text-align: center;
                 vertical-align: middle;
-              ">|</span>
+              ">|</span> -->
         <el-button type="primary" style="width: auto" @click.native="apk_input" :loading="loadingbut3">{{
           loadingbuttext3
         }}</el-button>
+        <!-- <span style="margin: 0 16px;
+                color: #d3d4dd;
+                font-size: 27px;
+                text-align: center;
+                vertical-align: middle;
+              ">|</span>
+             <el-button type="primary" @click="outputResult" style="width: 100px">导出结果</el-button>  -->
         <input type="file" ref="fileInput2" @change="handleFileChange2" style="display: none">
         <!-- <el-button type="primary" @click="toCreateTask" style="width: 110px">APK上传<i class="el-icon-upload el-icon--right"></i></el-button> -->
         <!-- <el-upload action="#" name="file" ref="upload" :limit="1" :show-file-list="false" :on-exceed="handleExceed"
@@ -53,7 +67,20 @@
 
         <!-- </el-upload> -->
       </div>
-
+      <div style="float: right; margin-top: 10px">
+        <a class="batch-opt border-right" @click="outputResult()">
+          <i class="el-icon-document"></i>
+          <span class="l10 grey" style="cursor: pointer">批量导出</span>
+        </a>
+        <a class="batch-opt border-right" @click="startTaskByList()">
+          <i class="el-icon-video-play green"></i>
+          <span class="l10 green" style="cursor: pointer">批量分析</span>
+        </a>
+        <a class="batch-opt" @click="deleteTaskByList()">
+          <i class="el-icon-delete red"></i>
+          <span class="l10 red" style="cursor: pointer">批量删除</span>
+        </a>
+      </div>
     </div>
     <!-- 任务列表 -->
     <div class="shadow-div">
@@ -65,6 +92,8 @@
           <el-table-column prop="appName" label="APP名称" :show-overflow-tooltip="true" min-width="130">
           </el-table-column>
           <el-table-column prop="pkgName" label="APP包名" :show-overflow-tooltip="true" min-width="150">
+          </el-table-column>
+          <el-table-column prop="appVersion" label="APP版本" :show-overflow-tooltip="true" min-width="120">
           </el-table-column>
           <el-table-column prop="status" label="状态" :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -80,8 +109,8 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="issuer" label="开发者" :show-overflow-tooltip="true" min-width="120">
-          </el-table-column>
+          <!-- <el-table-column prop="issuer" label="开发者" :show-overflow-tooltip="true" min-width="120">
+          </el-table-column> -->
           <el-table-column prop="source" label="来源" :show-overflow-tooltip="true" min-width="120">
           </el-table-column>
           <el-table-column label="操作" width="220" fixed="right">
@@ -94,7 +123,7 @@
           </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-size="pageSize" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next, jumper"
+          :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
           :total="taskTotal" style="float: right; margin-top: 16px">
         </el-pagination>
       </div>
@@ -178,7 +207,7 @@ export default {
         permissions: [],
         sdks: []
       },
-
+      statusList: [{ label: "待分析", value: 0 }, { label: '分析中', value: 1 }, { label: "已完成", value: 2 }],
       certificateVisible: false,
       dialogVisible: false,
       loadingbuttext3: 'APK上传',
@@ -226,6 +255,44 @@ export default {
     window.removeEventListener("keydown", this.handleSearch, false); //销毁回车事件，如果不销毁，在其他页面敲回车也会执行回车登录操作。
   },
   methods: {
+    async outputResult(){
+      console.log(this.ids);
+      // if (this.ids.length == 0) {
+      //   this.$message("请选择需要导出的任务");
+      //   return;
+      // }
+      const formData = new FormData()
+      formData.append("ids",this.ids)
+      formData.append("appName",this.taskForm.appName)
+      formData.append("status",this.taskForm.status)
+      formData.append("pkgName",this.taskForm.pkgName)
+      formData.append("startDate",this.taskForm.sTime)
+      formData.append("endDate",this.taskForm.eTime)
+      const { data: res } = await this.$http({
+        method: 'POST',
+        url: "/apk/export_result",
+        responseType: 'arraybuffer',
+        data:formData
+      })
+      // const { data: res } = await this.$http({
+      //   method: 'POST',
+      //   url: "/apk/export_result?ids=" + this.ids,
+      //   responseType: 'arraybuffer',
+      // })
+      let blob = res
+      let title = '分析任务导出结果.xlsx'
+      let binaryData = []
+      binaryData.push(blob)
+      let url = window.URL.createObjectURL(new Blob(binaryData), {
+        type: 'application/vnd.ms-excel',
+      })
+      const aLink = document.createElement('a')
+      aLink.href = url
+      aLink.setAttribute('download', title)
+      document.body.appendChild(aLink)
+      aLink.click()
+      document.body.removeChild(aLink)          
+    },
     showCertificate(sslCert) {
       console.log(sslCert);
       // 显示SSL证书内容的浮层
@@ -326,6 +393,9 @@ export default {
             pageSize: this.pageSize,
             appName: this.taskForm.appName,
             pkgName: this.taskForm.pkgName,
+            status: this.taskForm.status,
+            startDate: this.taskForm.sTime,
+            endDate: this.taskForm.eTime,
           },
         }
       );
@@ -399,6 +469,9 @@ export default {
     resetForm() {
       this.taskForm.appName = "",
         this.taskForm.pkgName = "",
+        this.taskForm.status = "",
+        this.taskForm.sTime = "",
+       this.taskForm.eTime = "",
         this.tasklist();
     },
     //分页
@@ -524,7 +597,7 @@ export default {
       })
         .then(async () => {
           const { data: res } = await this.$http.post(
-            "/task/delTask?ids=" + this.ids
+            "/apk/batchDel?ids=" + this.ids
           );
 
           if (res.code == 200) {
@@ -759,8 +832,9 @@ export default {
 
 .el-dialog>div {
   .permissions-list {
+    max-height: 150px; /* 设置列表容器的固定高度 */
+    overflow-y: auto; /* 在内容溢出时显示垂直滚动条 */
     font-size: 10px;
-
     .permission-row {
       display: flex;
       border-bottom: 1px solid #c9c9c9;
@@ -790,6 +864,8 @@ export default {
 .el-dialog>div {
 
   .sdk-list {
+    max-height: 150px; /* 设置列表容器的固定高度 */
+    overflow-y: auto; /* 在内容溢出时显示垂直滚动条 */
     p {
       padding: 5px;
       border: 1px solid #c9c9c9;

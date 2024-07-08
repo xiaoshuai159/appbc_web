@@ -172,7 +172,9 @@ export default {
           cancelButtonText: "取消",
           type: "warning",
         }).then(async () => {
-          const { data: res } = await this.$http.post("/app/edit?appScriptName=" + this.probeAppForm.appScriptName + "&appName=" + this.probeAppForm.appName + "&appVer=" + this.probeAppForm.appVer + "&remarks=" + this.probeAppForm.remarks);
+          const formData = new FormData()
+        formData.append('file', this.probeAppForm.file)
+          const { data: res } = await this.$http.post("/app/edit?appScriptName=" + this.probeAppForm.appScriptName + "&appName=" + this.probeAppForm.appName + "&appVer=" + this.probeAppForm.appVer + "&remarks=" + this.probeAppForm.remarks, formData);
           if (res.code == 200) {
             this.$message({
               message: "修改成功",

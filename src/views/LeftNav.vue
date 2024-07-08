@@ -38,7 +38,7 @@
             <el-menu-item index="/system_config/app_probe">app脚本管理</el-menu-item>
             <el-menu-item index="/system_config/app_account">app账号管理</el-menu-item>
             <el-menu-item index="/system_config/app_crawl">app版本跟踪</el-menu-item>
-            <el-menu-item index="/system_config/apk_manage">apk管理</el-menu-item>
+            <!-- <el-menu-item index="/system_config/apk_manage">apk管理</el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
       </el-menu>

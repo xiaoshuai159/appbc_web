@@ -56,10 +56,14 @@
     <div style="float: right; width: calc(100% - 70px)">
       <!-- 导出按钮 -->
       <div style="display: flex;justify-content: flex-end;width: 100%;margin-bottom: 20px;">
-        <el-button style="width: 140px;background-color: #F39300;" @click="exportResult()">
+        <!-- <el-button style="width: 140px;background-color: #F39300;" @click="exportResult()">
           <i class="el-icon-document-copy"></i>
           <span style="margin-left: 8px;">导出查询结果</span>
-        </el-button>
+        </el-button> -->
+        <a class="batch-opt border-right" @click="exportResult()">
+          <i class="el-icon-document"></i>
+          <span class="l10 grey" style="cursor: pointer">批量导出</span>
+        </a>
       </div>
       <!-- 表格 -->
       <div class="block_base base_table" style="width:calc(100% - 40px)">
@@ -120,7 +124,7 @@
           </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[10, 20, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+          :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
           :total="resultTotal" style="float: right;margin-top: 16px">
         </el-pagination>
       </div>
@@ -422,6 +426,21 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.batch-opt {
+  font-family: Microsoft YaHei;
+  font-size: 15px;
+  // font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+  padding: 0 12px;
+}
+.grey {
+  color: #666666;
+}
+.l10 {
+  margin-left: 10px;
+}
 .custom-modal {
   display: block;
   position: fixed;

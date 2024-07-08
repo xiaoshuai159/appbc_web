@@ -70,10 +70,14 @@
         </div>
         <div>
           <!-- <el-button style="width: 140px;background-color: #F39300;" @click="handleExportExcel"> -->
-          <el-button style="width: 140px;background-color: #F39300;" @click="exportResult">
+          <!-- <el-button style="width: 140px;background-color: #F39300;" @click="exportResult">
             <i class="el-icon-document-copy"></i>
             <span style="margin-left: 8px;">导出查询结果</span>
-          </el-button>
+          </el-button> -->
+          <a class="batch-opt" @click="exportResult()">
+          <i class="el-icon-document"></i>
+          <span class="l10 grey" style="cursor: pointer">批量导出</span>
+        </a>
         </div>
       </div>
       <!-- 表格 -->
@@ -214,7 +218,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="resultCurrentPage"
-        :page-sizes="[10, 20, 50]"
+        :page-sizes="[10, 20, 50, 100]"
         :page-size="resultPageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="resultTotal"
@@ -403,6 +407,21 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.batch-opt {
+  font-family: Microsoft YaHei;
+  font-size: 15px;
+  // font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+  padding: 0 12px;
+}
+.grey {
+  color: #666666;
+}
+.l10 {
+  margin-left: 10px;
+}
 :deep(.el-table) {
     font-size: 16px !important;
 }

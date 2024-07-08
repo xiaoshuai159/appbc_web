@@ -2,6 +2,7 @@ import axios from 'axios'
 import https from 'https'
 import router from '@/router' // 引入路由对象实例
 import store from '@/store'
+import { Message } from 'element-ui'
 // import {getToken} from '@/api/home'
 
 // 移动端获取token地址完整地址
@@ -29,7 +30,27 @@ instance.interceptors.request.use(
       return Promise.reject(error)
   }
 )
-
+// instance.interceptors.response.use(
+//     response => {
+//       if(response.data.code === 404) {
+//         // this.$message({
+//         //   message: '1',
+//         //   type: "error",
+//         // });
+//       }else{
+//           return response
+//       }
+//     },
+//       error => {
+//         console.log(error);
+//         if(error.response.status == 404){
+//           Message({
+//             message: error.response.statusText,
+//             type: "error",
+//           });
+//         }
+//           return Promise.reject(error)
+//       })
 // instance.interceptors.response.use(
 //   response => {
 //       // console.log("response",response)
