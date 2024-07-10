@@ -55,7 +55,7 @@
               <el-button class="operator-table-btn blue" type="info" size="mini"
                 @click="updateProbeApp(scope.row.id)">修改</el-button>
               <el-button class="operator-table-btn orange" type="info" size="mini"
-                @click="downloadApp(scope.row.id)">下载</el-button>
+                @click="downloadApp(scope.row)">下载</el-button>
               <el-button class="operator-table-btn red" type="info" size="mini"
                 @click="DeleteApp(scope.row.id)">删除</el-button>
             </template>
@@ -242,7 +242,8 @@ export default {
 
     },
     //下载app
-    async downloadApp(id) {
+    async downloadApp(row) {
+      const { id, appScriptName } = row
       const { data: res } = await this.$http.get(
         "/app/download?id=" + id,
         // {
@@ -258,11 +259,16 @@ export default {
       } else {
         let binaryData = [];
         binaryData.push(res);
-        var _url = window.URL.createObjectURL(new Blob(binaryData, { type: "application/vnd.ms-excel" }))
-        window.open(_url, "_blank").focus();
+        var _url = window.URL.createObjectURL(new Blob(binaryData))
+        // window.open(_url, "_blank").focus();
+        const a = document.createElement('a')
+        a.style.display = 'none'
+        a.href = _url
+        a.download = appScriptName // 自定义下载文件的名称
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       }
-
-
     },
     //批量操作按钮
     handleSelectionChange(val) {

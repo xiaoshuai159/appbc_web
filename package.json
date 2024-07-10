@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build"
   },
   "dependencies": {
     "autofit.js": "^3.0.7",
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
     "echarts": "^5.4.0",
-    "element-ui": "^2.115.9",
+    "element-ui": "^2.15.14",
     "moment": "^2.29.4",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
